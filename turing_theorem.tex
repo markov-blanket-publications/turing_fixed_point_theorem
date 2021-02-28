@@ -1,0 +1,202 @@
+\documentclass{article}
+
+% ready for submission
+\usepackage{arxiv}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+% \usepackage[final]{neurips_2018}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{graphicx}
+\usepackage{csquotes}
+
+\title{Turing's fixed point theorem}
+
+\date{February 28, 2021}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  Aidan Rocke\\
+  \texttt{aidanrocke@gmail.com} \\
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+}
+
+\begin{document}
+% \nipsfinalcopy is no longer used
+
+\maketitle
+
+\enquote{The view that machines cannot give rise to surprises is due, I believe, to a fallacy to which philosophers and mathematicians are particularly subject. This is the assumption that as soon as a fact is presented to a mind all consequences of that fact spring into the mind simultaneously with it. It is a very useful assumption under many circumstances, but one too easily forgets that it is false.}-Alan Turing
+
+\section{Introduction}
+
+It is worth noting that any loop involves a sequence of functions $\{f_i\}_{i=1}^n$ composed
+with each other $f_{i+1} \circ f_i$ with the restriction that:
+
+\begin{equation}
+\forall i, f_{i+1} \equiv f_i \Rightarrow f^2 = f_{i+1} \circ f_i
+\end{equation}
+
+Now, it is natural to ask whether it is possible to define a halting criterion $G$ for any
+computable function $f$ such that $\forall x \in \text{Dom}(f)$:
+
+\begin{equation}
+\forall n \in \mathbb{N}, G \circ f^n \circ x = 1 \Rightarrow \textbf{program halts}
+\end{equation}
+
+\begin{equation}
+\forall n \in \mathbb{N}, G \circ f^n \circ x = 0 \Rightarrow f \circ f^n \circ x
+\end{equation}
+
+and most importantly we would like to guarantee that $G$ eventually halts the process $f$:
+
+\begin{equation}
+\exists n \in \mathbb{N}, G \circ f^n \circ x = 1 \Rightarrow \textbf{program halts}
+\end{equation}
+
+which is to say that the loop eventually terminates. What Turing found is that there are some functions
+$f$ that are a fixed point of $f$ i.e. there are some loops which never terminate and more importantly
+it is generally impossible to know whether a function $f$ belongs to the class of functions that halt on all its inputs
+or not. From this we may deduce that within the realm of computable functions, a function $G$ that serves as
+a general halting criterion for all computable functions does not exist.
+
+From a dynamical systems perspective Turing's formulation of the halting problem has two interesting features.
+First, it clearly shows that that there is an intrinsic directionality in the information processing behaviour of Turing Machines. Second, its expression as a fixed point theorem presciently anticipates the development of Chaos theory for deterministic dynamical systems.
+
+By formulating Turing's theorem in this manner we also manage to address the misplaced criticism from the computational biology community that biological systems are dynamical systems and not computers.
+
+\newpage
+
+
+\section{Turing's theorem:}
+
+\subsection{Statement of the theorem:}
+
+Let $H$ be a computable function which takes two inputs $a,b \in \{0,1\}^*$ and always
+returns $0$(i.e. halts) or $1$(i.e. an infinite loop):
+
+\begin{equation}
+H: \{0,1\}^* \times \{0,1\}^* \rightarrow \{0,1\}
+\end{equation}
+
+where $\{0,1\}^*$ is the space of all binary strings, which naturally includes binary encodings
+of computable functions.
+
+Then there exists a function $P \in \{0,1\}^*$ such that $P \circ P$ halts if and only if
+$H(P,P)$ is an infinite loop.
+
+\subsection{Proof:}
+
+Let's consider the function:
+
+\begin{equation}
+\forall x \in \{0,1\}^*, P \circ x = \textbf{Bool} \circ \{H(x,x) = 0\}
+\end{equation}
+
+Given that $H(P,P) = 1 \lor 0$ we have two cases:
+
+\begin{equation}
+H(P,P) = 0 \Rightarrow P \circ P = 1
+\end{equation}
+
+\begin{equation}
+H(P,P) = 1 \Rightarrow P \circ P = 0
+\end{equation}
+
+However, in boolean arithmetic both cases reduce to:
+
+\begin{equation}
+H(P,P) + P \circ P = 1
+\end{equation}
+
+so $P$ enters an infinite loop either way or to be mathematically precise, $P$ is a fixed
+point of the computable function $P$.
+
+\section{Turing's theorem from a dynamical systems perspective}
+
+From a dynamical systems perspective, the stopping criterion $H$ is equivalent to stating that
+for any deterministic transformation $f$ operating on a state-space $X$:
+
+\begin{equation}
+\forall x_0 \in X, x_{n+1} = f \circ x_n
+\end{equation}
+
+and we may decompose the state-space into $X = \Lambda \cup X \setminus \Lambda$ such that the question of whether $\Lambda$ contains all the attractors of $f$ is a decidable problem.
+
+Given the space of computable functions $F$, this decidable problem may be formulated in terms of the
+halting function $H$ so we have:
+
+\begin{equation}
+\forall f \in F, H \circ f = \textbf{Bool} \circ \{\forall x \in \text{Dom}(f) \exists n \in \mathbb{N}, f^n \circ x \in \Lambda\} \in \\{0,1\\}
+\end{equation}
+
+such that $H$ is defined $\forall f \in F$, i.e. $H$ is a total function. Turing showed that such a function $H$
+does not exist.
+
+This is akin to asking whether given $x_0 \in \text{Dom}(f)$, we may predict the destiny of $x_0$ knowing that:
+
+\begin{equation}
+x_{n+1} = f \circ x_n
+\end{equation}
+
+and assuming that we know everything that can be known about $f$. Turing's theorem shows that this is generally impossible
+within Peano Arithmetic.
+
+In fact, this result anticipated in a profound sense the development of Chaos theory and the Butterfly effect in particular.
+So we may say that Turing's fixed point theorem is a profound result in Chaos theory and has important consequences for epistemology in general.
+
+\newpage
+
+\section{Discussion}
+
+This is a very important result in the natural sciences because it shows that there is a fundamental asymmetry between mathematically-defined computational processes which are not guaranteed to halt and \textit{physical processes} which are guaranteed to halt due to energy constraints. The source of this
+asymmetry is not that computers are not dynamical systems, it is that there are fundamental limits to what humans can know about dynamical systems. In an important sense, in order to understand the scope of Turing Machines in the natural sciences it is important to develop a deep understanding of Chaos theory.
+
+Finally, I would like to note that Universal Turing machines are strictly more powerful than dynamical systems(which are equivalent to Turing Machines) because they possess unbounded memory as well as a combinatorial language that is sufficiently expressive to simulate any dynamical system. The subject of UTMs will be addressed in a future article.
+
+\section*{References}
+
+\small
+
+[1] Church, Alonzo (1936). "An Unsolvable Problem of Elementary Number Theory". American Journal of Mathematics. 58 (2): 345–363. doi:10.2307/2371045. JSTOR 2371045.
+
+[2] Alan Turing, On Computable Numbers, with an Application to the Entscheidungsproblem. A Correction, Proceedings of the London Mathematical Society, Series 2, Volume 43 (1938), pp 544–546 
+
+[3] Steven H. Strogatz. Nonlinear Dynamics and Chaos. CRC Press; 2nd edition. 2015.
+
+
+\end{document}
